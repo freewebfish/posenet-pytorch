@@ -22,11 +22,17 @@ def _process_input(source_img, scale_factor=1.0, output_stride=16):
     return input_img, source_img, scale
 
 
-def read_cap(cap, scale_factor=1.0, output_stride=16):
+def read_cap(cap, scale_factor=1.0, output_stride=16, mirror_flip=False, use_webcam=True):
     res, img = cap.read()
     if not res:
-        raise IOError("webcam failure")
-    return _process_input(img, scale_factor, output_stride)
+        if use_webcam:
+            raise IOError("webcam failure")
+        else:
+            return None, None, 1.0
+    else:
+        if mirror_flip:
+            img = cv2.flip(img, 1)
+        return _process_input(img, scale_factor, output_stride)
 
 
 def read_imgfile(path, scale_factor=1.0, output_stride=16):

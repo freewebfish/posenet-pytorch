@@ -24,8 +24,10 @@ def main():
     output_stride = model.output_stride
 
     mirror_flip = args.mirror_flip
+    use_webcam = True
     if args.file is not None:
         cap = cv2.VideoCapture(args.file)
+        use_webcam = False
     else:
         cap = cv2.VideoCapture(args.cam_id, cv2.CAP_DSHOW)
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.cam_width)
@@ -53,9 +55,8 @@ def main():
 
         if flag == True:            
             tik = time.time()
-
             input_image, display_image, output_scale = posenet.read_cap(
-                cap, scale_factor=args.scale_factor, output_stride=output_stride, mirror_flip=mirror_flip)
+                cap, scale_factor=args.scale_factor, output_stride=output_stride, mirror_flip=mirror_flip, use_webcam=use_webcam)
             if display_image is None:
                 break
 
@@ -87,13 +88,13 @@ def main():
             #print('FPS: ', frame_count / (time.time() - start))                
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-            else:
-                continue
+        else:
+            continue
 
-        print("Average FPS: %.1f" %(frame_count / (time.time() - start)))
-        # When everything done, release the capture
-        cap.release()
-        cv2.destroyAllWindows()
+    print("Average FPS: %.1f" %(frame_count / (time.time() - start)))
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()
